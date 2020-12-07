@@ -3,7 +3,7 @@ package samples
 import java.util.logging.{Level, Logger}
 
 import org.apache.spark.sql.SparkSession
-import samples.services.{Service1, Service2}
+import samples.services.{Service1, Service2, Service3}
 
 object SampleProgram {
 
@@ -11,26 +11,25 @@ object SampleProgram {
 
     Logger.getLogger("org").setLevel(Level.OFF)
 
-    //Avec ConfigParser et ReaderWriter
-//    val configCli = ConfigParser.getConfigArgs(args)
-//    val df = SparkReaderWriter.readData(configCli.inputPath, configCli.inputFormat, hasHeader = true, configCli.delimiter)
-//    df.show()
-//
-//    val DfWithoutId = df.filter(col("ID") =!= configCli.id)
-//    SparkReaderWriter.writeData(DfWithoutId, configCli.outputPath, configCli.outputFormat, overwrite = true, Seq())
-//    DfWithoutId.show()
-
     implicit val spark: SparkSession = SparkSession.builder().master("local").getOrCreate()
 
-    //Service 1
-    val data = spark.read.csv("")
-    val result = Service1.filterClientId(data, "11224")
+    //Launcher for services
+    val serviceToLaunch = "s1"
+    val df = spark.read.csv("inputPath")
 
-    result.write.csv("inputPath")
+    serviceToLaunch match {
+      case "s1" => Service1.deleteLineWithId(df, "", "")
+      case "s2" => Service2.hashIdColumn(df, "", "", "")
+      case "s3" => Service3.getClientData(df, "", "", "")
 
-    //Service 2
-    val resultService2 = Service2.hashIdColumn(data, "idClient")
-    resultService2.write.csv("inputPath")
     }
-
+  }
+    //Avec ConfigParser et ReaderWriter pour Service 1
+    //    val configCli = ConfigParser.getConfigArgs(args)
+    //    val df = SparkReaderWriter.readData(configCli.inputPath, configCli.inputFormat, hasHeader = true, configCli.delimiter)
+    //    df.show()
+    //
+    //    val DfWithoutId = df.filter(col("ID") =!= configCli.id)
+    //    SparkReaderWriter.writeData(DfWithoutId, configCli.outputPath, configCli.outputFormat, overwrite = true, Seq())
+    //    DfWithoutId.show()
 }
