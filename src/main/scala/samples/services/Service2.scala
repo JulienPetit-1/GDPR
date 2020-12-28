@@ -7,7 +7,7 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{col, udf}
 
-
+//Service qui permet aux clients de hasher leurs données en fournissant leur identifiant
 object Service2 {
 
   //On définit une udf qui permet de hash un string (masquer le contenu)
